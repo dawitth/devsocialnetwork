@@ -113,33 +113,53 @@ router.post('/', [auth, [
 			} catch(err){
 				return res.status(500).json({msg: "Server error"})
 			}
-		
-/*
-	try{
-		let profile = await Profile.findOne({user: req.user.id})
 
-		if(profile){
-			// update 
-			profile = await Profile.findOneAndUpdate(
-				{user:req.user.id}, 
-				{$set: profileFields}, 
-				{new: true})
-			return res.json(profile)
-		}
-		//create
-		profile = new Profile(profileFields)
-		await profile.save();
-		res.json(profile)
-
-	} catch(err){
-		return res.status(500).json({msg: "Server error"})
-	}
-
-
-*/
 	return res.status(200).json({msg: "made it here"})
 })
 
+
+
+// @ Route         Get api/profile
+// @ Description   Get all profile
+// @ Acesss        Public
+
+router.get('/', async(req,res) => {
+	try{
+		const profiles = await Profile.find().populate('user',['name','avatar']);
+		res.json(profiles);
+
+
+	} catch (err){
+		console.log(err.message);
+		return res.status(500).json({msg: "Server error"})
+	}
+}) 
+
+// @ Route         Get api/profile/:user_id
+// @ Description   Get profile by user ID
+// @ Acesss        Public
+
+router.get('/user/:user_id', async(req,res) => {
+	try{
+		const profile = await Profile.findOne({user:req.params.user_id}).populate('user',['name','avatar']);
+		
+		if(!profile){
+			return res.status(400).json({msg: 'Profile not found'})
+
+		}
+
+		res.json(profile);
+		
+		
+	} catch (err){
+		console.log(err.message);
+
+		if(err.kind == 'ObjectID')
+			return res.status(400).json({msg: 'Profile not found'})
+
+		return res.status(500).json({msg: "Server error"})
+	}
+}) 
 
 
 
