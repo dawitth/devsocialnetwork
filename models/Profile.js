@@ -70,7 +70,7 @@ const ProfileSchema = new Schema({
 			},
 			company: {
 				type:String,
-			 	required: true
+		
 			},
 			fieldofstudy: {
 				type:String,
